@@ -1,0 +1,16 @@
+{
+  "name": "luckyraul-varnish",
+  "version": "1.0.0",
+  "author": "luckyraul",
+  "summary": "Module to manage the Varnish Web Accelerator",
+  "license": "MIT",
+  "source": "https://github.com/luckyraul/puppet-varnish",
+  "project_page": "https://github.com/luckyraul/puppet-varnish",
+  "issues_url": "https://github.com/luckyraul/puppet-varnish/issues",
+  "description": "Varnish module for Puppet",
+  "dependencies": [
+    {"name":"puppetlabs/stdlib","version_requirement":">= 4.1.0"},
+    {"name":"puppetlabs/apt","version_requirement":">= 1.8.0 <= 3.0.0"},
+    {"name": "puppetlabs/inifile","version_requirement":">= 1.4.3"}
+  ]
+}
