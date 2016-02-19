@@ -18,7 +18,6 @@ class varnish::repo {
               apt::pin { 'varnish':
                   ensure   => 'present',
                   packages => [$varnish::packages],
-                  priority => 500,
                   version  => '3.*'
               }
           }
