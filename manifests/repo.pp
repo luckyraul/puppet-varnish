@@ -3,7 +3,13 @@
 # This class is called from varnish. It ensures the varnish apt repo is
 # installed. It will fail if called on it's own.
 #
-class varnish::repo {
+class varnish::repo (
+    $location = 'https://repo.varnish-cache.org/debian/',
+    $key          = {
+        'id'     => 'E98C6BBBA1CBC5C3EB2DF21C60E7C096C4DEFFEB',
+        'source' => 'https://repo.varnish-cache.org/GPG-key.txt',
+    }
+    ){
     include apt
 
     if ! defined(Package['apt-transport-https']) {
@@ -12,7 +18,11 @@ class varnish::repo {
         }
     }
 
-    case $varnish::package_version {
+    create_resources(::apt::key, { 'varnish_cache' => {
+        key => $key['id'], key_source => $key['source'],
+    }})
+
+    case $varnish::version {
       '3.0': {
           if $::lsbdistcodename == 'jessie' {
               apt::pin { 'varnish':
@@ -32,17 +42,12 @@ class varnish::repo {
     }
 
     apt::source { 'varnish-cache':
-        location => $::varnish::params::apt_location,
+        location => $location,
         release  => $::lsbdistcodename,
         repos    => "varnish-${varnish::version}",
         include  => {
             'src' => false
-        },
-        key      => {
-            id     => $::varnish::params::apt_key,
-            source => $::varnish::params::apt_key_source
         }
-
     }
 
     Exec['apt_update'] -> Package[$varnish::packages]

@@ -6,9 +6,6 @@
 class varnish::params {
     case $::osfamily {
       'Debian': {
-          $apt_key = 'E98C6BBBA1CBC5C3EB2DF21C60E7C096C4DEFFEB'
-          $apt_key_source = 'https://repo.varnish-cache.org/GPG-key.txt'
-          $apt_location = 'https://repo.varnish-cache.org/debian/'
           $packages = ['varnish','libvarnishapi1']
           $service_name = 'varnish'
           $service_ensure = 'running'
