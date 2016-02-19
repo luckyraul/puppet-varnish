@@ -32,7 +32,7 @@ class varnish::repo {
     }
 
     apt::source { 'varnish-cache':
-        location    => $::varnish::params::apt_key,
+        location    => $::varnish::params::apt_location,
         release     => $::lsbdistcodename,
         repos       => "varnish-${varnish::package_version}",
         key         => $::varnish::params::apt_key,
