@@ -13,17 +13,17 @@ class varnish::service {
     hasrestart => true,
   }
 
-  service { $varnish::params::service_log_name:
+  #service { $varnish::params::service_log_name:
     #ensure     => $varnish::service_log_ensure,
     #enable     => $varnish::service_log_status,
-    hasstatus  => true,
-    hasrestart => true,
-  }
+    #hasstatus  => true,
+    #hasrestart => true,
+  #}
 
-  service { $varnish::params::service_ncsa_name:
+  #service { $varnish::params::service_ncsa_name:
     #ensure     => $varnish::service_ncsa_ensure,
     #enable     => $varnish::service_ncsa_status,
-    hasstatus  => true,
-    hasrestart => true,
-  }
+    #hasstatus  => true,
+    #hasrestart => true,
+  #}
 }

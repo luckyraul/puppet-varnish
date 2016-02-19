@@ -12,15 +12,15 @@ class varnish::params {
           $packages = ['varnish','libvarnishapi1']
           $service_name = 'varnish'
           $service_ensure = 'running'
-          $service_status = 'enabled'
+          $service_status = true
 
           $service_log_name = 'varnishlog'
           $service_log_ensure = 'running'
-          $service_log_status = 'enabled'
+          $service_log_status = true
 
           $service_ncsa_name = 'varnishncsa'
           $service_ncsa_ensure = 'running'
-          $service_ncsa_status = 'enabled'
+          $service_ncsa_status = true
 
 
           case $::lsbdistcodename {
