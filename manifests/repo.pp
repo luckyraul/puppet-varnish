@@ -32,12 +32,17 @@ class varnish::repo {
     }
 
     apt::source { 'varnish-cache':
-        location    => $::varnish::params::apt_location,
-        release     => $::lsbdistcodename,
-        repos       => "varnish-${varnish::version}",
-        key         => $::varnish::params::apt_key,
-        key_source  => $::varnish::params::apt_key_source,
-        include_src => false,
+        location => $::varnish::params::apt_location,
+        release  => $::lsbdistcodename,
+        repos    => "varnish-${varnish::version}",
+        include  => {
+            'src' => false
+        },
+        key      => {
+            id     => $::varnish::params::apt_key,
+            source => $::varnish::params::apt_key_source
+        }
+
     }
 
     Exec['apt_update'] -> Package[$varnish::packages]
