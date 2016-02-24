@@ -19,7 +19,7 @@ class varnish::repo (
     }
 
     create_resources(::apt::key, { 'varnish_cache' => {
-        key => $key['id'], key_source => $key['source'],
+        id => $key['id'], source => $key['source'],
     }})
 
     case $varnish::version {
