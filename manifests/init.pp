@@ -11,6 +11,9 @@ class varnish (
     $service_ncsa_status = $varnish::params::service_ncsa_status,
 ) inherits varnish::params
 {
+
+    validate_string($version)
+    
     anchor { 'varnish::begin': } ->
     class { 'varnish::repo': } ->
     class { 'varnish::install': } ->
