@@ -13,6 +13,7 @@ class varnish (
 {
 
     validate_string($version)
+    validate_slength($version, 3, 3)
     
     anchor { 'varnish::begin': } ->
     class { 'varnish::repo': } ->
