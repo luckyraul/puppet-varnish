@@ -8,9 +8,11 @@ class varnish::repo (
     $key          = {
         'id'     => 'E98C6BBBA1CBC5C3EB2DF21C60E7C096C4DEFFEB',
         'source' => 'https://repo.varnish-cache.org/GPG-key.txt',
-    }
+    },
+    $version = $varnish::version
     ){
     include apt
+    validate_string($version)
 
     if ! defined(Package['apt-transport-https']) {
         package { 'apt-transport-https':
@@ -21,10 +23,8 @@ class varnish::repo (
     create_resources(::apt::key, { 'varnish_cache' => {
         id => $key['id'], source => $key['source'],
     }})
-    
-    notify{"VERSION VARIABLE FORMAT: ${type_of($varnish::version)}":}
 
-    case $varnish::version {
+    case $version {
       '3.0': {
           if $::lsbdistcodename == 'jessie' {
               apt::pin { 'varnish':
