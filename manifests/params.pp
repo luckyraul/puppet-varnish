@@ -28,7 +28,7 @@ class varnish::params {
                     $package_version = '4.1'
                 }
                 default: {
-                    fail("Unsupported release: ${::lsbdistcodename}")
+                    fail("Unsupported debian release: ${::lsbdistcodename}")
                 }
           }
       }
