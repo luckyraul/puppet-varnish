@@ -13,6 +13,7 @@ class varnish::repo (
     ){
     include apt
     validate_string($version)
+    validate_slength($version, 3, 3)
 
     if ! defined(Package['apt-transport-https']) {
         package { 'apt-transport-https':
