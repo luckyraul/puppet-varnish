@@ -39,7 +39,7 @@ class varnish::repo (
 
       }
       default: {
-          fail("Unsupported varnish release: ${varnish::package_version}")
+          fail("Unsupported varnish release: ${version}")
       }
     }
 
