@@ -21,6 +21,8 @@ class varnish::repo (
     create_resources(::apt::key, { 'varnish_cache' => {
         id => $key['id'], source => $key['source'],
     }})
+    
+    notify{"VERSION VARIABLE FORMAT: ${type_of($varnish::version)}":}
 
     case $varnish::version {
       '3.0': {
