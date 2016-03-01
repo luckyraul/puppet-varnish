@@ -46,7 +46,7 @@ class varnish::repo (
     apt::source { 'varnish-cache':
         location => $location,
         release  => $::lsbdistcodename,
-        repos    => "varnish-${varnish::version}",
+        repos    => "varnish-${version}",
         include  => {
             'src' => false
         }
