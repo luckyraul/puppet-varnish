@@ -25,7 +25,7 @@ class varnish::params {
                     $package_version = '3.0'
                 }
                 'jessie': {
-                    $package_version = '4.1'
+                    $package_version = '5.1'
                 }
                 default: {
                     fail("Unsupported release: ${::lsbdistcodename}")
