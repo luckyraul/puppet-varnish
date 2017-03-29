@@ -7,10 +7,12 @@ class varnish::repo (
     $version  = $varnish::version,
     ) {
     include apt
+    validate_string($version)
+    validate_slength($version, 3, 3)
 
     ensure_packages(['apt-transport-https'], {'ensure' => latest})
 
-    case $varnish::version {
+    case $version {
       '3.0': {
           $version_code  = '30'
           $key_id = '246BE381150865E2DC8C6B01FC1318ACEE2C594C'

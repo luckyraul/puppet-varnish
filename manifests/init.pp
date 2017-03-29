@@ -14,6 +14,10 @@ class varnish (
     $docker              = false,
 ) inherits varnish::params
 {
+
+    validate_string($version)
+    validate_slength($version, 3, 3)
+    
     anchor { 'varnish::begin': } ->
     class { 'varnish::repo': } ->
     class { 'varnish::install': } ->
