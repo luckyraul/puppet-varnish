@@ -6,7 +6,8 @@
 class varnish::params {
     case $::osfamily {
       'Debian': {
-          $packages = ['varnish','libvarnishapi1']
+          $packages = ['varnish']
+          $package_ensure = 'latest'
           $service_name = 'varnish'
           $service_ensure = 'running'
           $service_status = true
@@ -22,9 +23,12 @@ class varnish::params {
 
           case $::lsbdistcodename {
                 'wheezy': {
-                    $package_version = '3.0'
+                    $package_version = '4.1'
                 }
                 'jessie': {
+                    $package_version = '5.1'
+                }
+                'stretch': {
                     $package_version = '5.1'
                 }
                 default: {
