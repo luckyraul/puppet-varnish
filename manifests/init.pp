@@ -17,13 +17,13 @@ class varnish (
 
     validate_string($version)
     validate_slength($version, 3, 3)
-    
-    anchor { 'varnish::begin': } ->
-    class { 'varnish::repo': } ->
-    class { 'varnish::install': } ->
-    class { 'varnish::config': } ->
-    class { 'varnish::service': } ->
-    anchor { 'varnish::end': }
+
+    anchor { 'varnish::begin': }
+    -> class { 'varnish::repo': }
+    -> class { 'varnish::install': }
+    -> class { 'varnish::config': }
+    -> class { 'varnish::service': }
+    -> anchor { 'varnish::end': }
 
     if $docker {
       file {'/start.sh':

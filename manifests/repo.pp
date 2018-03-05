@@ -34,12 +34,16 @@ class varnish::repo (
           $key_id = '9C96F9CA0DC3F4EA78FF332834BF6E8ECBF5C49E'
       }
       '5.0': {
-          $version_code  = '5'
-          $key_id = '3E925951E2C07969121BDAB481F8CA2EC23F55C5'
+          $version_code  = '50'
+          $key_id = '1487779B0E6C440214F07945632B6ED0FF6A1C76'
       }
       '5.1': {
           $version_code  = '51'
-          $key_id = 'D9BC9B0F44870207A88FC3B33746967BC02AF8C2'
+          $key_id = '54DC32329C37703D8B2819E6414C46826B880524'
+      }
+      '5.2': {
+          $version_code  = '52'
+          $key_id = '91CFD5635A1A5FAC0662BEDD2E9BA3FE86BE909D'
       }
       default: {
           fail("Unsupported release: ${varnish::version}")

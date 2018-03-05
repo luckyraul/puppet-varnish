@@ -26,10 +26,10 @@ class varnish::params {
                     $package_version = '4.1'
                 }
                 'jessie': {
-                    $package_version = '5.1'
+                    $package_version = '5.2'
                 }
                 'stretch': {
-                    $package_version = '5.1'
+                    $package_version = '5.2'
                 }
                 default: {
                     fail("Unsupported debian release: ${::lsbdistcodename}")
