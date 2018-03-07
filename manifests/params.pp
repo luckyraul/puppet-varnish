@@ -20,7 +20,6 @@ class varnish::params {
           $service_ncsa_ensure = 'running'
           $service_ncsa_status = true
 
-
           case $::lsbdistcodename {
                 'wheezy': {
                     $package_version = '4.1'
