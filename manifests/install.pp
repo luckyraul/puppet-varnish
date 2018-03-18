@@ -15,6 +15,7 @@ class varnish::install {
   $vcl_conf = $varnish::vcl_conf
   $storage_type = $varnish::storage_type
   $storage_size = $varnish::storage_size
+  $ulimit = $varnish::ulimit
 
   package { $packages :
     ensure => $ensure,

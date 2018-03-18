@@ -18,6 +18,7 @@ class varnish (
     Stdlib::AbsolutePath $secret_file   = '/etc/varnish/secret',
     Stdlib::AbsolutePath $vcl_conf      = '/etc/varnish/default.vcl',
     String $storage_size                = '256m',
+    Integer $ulimit                     = 131072,
     Enum['file','malloc'] $storage_type = 'malloc',
 
     $docker              = false,

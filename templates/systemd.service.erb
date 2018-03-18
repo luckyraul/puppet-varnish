@@ -1,3 +1,7 @@
 [Service]
+
+# Maximum number of open files (for ulimit -n)
+LimitNOFILE=<%= @ulimit %>
+
 ExecStart=
 ExecStart=/usr/sbin/varnishd -a <%= @listen %>:<%= @listen_port %> -T <%= @admin_listen %>:<%= @admin_port %> -f <%= @vcl_conf %> -S <%= @secret_file %> -s <%= @storage_type %>,<%= @storage_size %>
