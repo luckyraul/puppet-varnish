@@ -45,6 +45,14 @@ class varnish::repo (
           $version_code  = '52'
           $key_id = '91CFD5635A1A5FAC0662BEDD2E9BA3FE86BE909D'
       }
+      '6.0': {
+          $version_code  = '60'
+          $key_id = '7C5B46721AF00FD57E68E6E8D2605BF74E8B9DBA'
+      }
+      '6.1': {
+          $version_code  = '61'
+          $key_id = '4A066C99B76A0F55A40E3E1E387EF1F5742D76CC'
+      }
       default: {
           fail("Unsupported release: ${varnish::version}")
       }
