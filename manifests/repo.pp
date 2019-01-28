@@ -10,8 +10,6 @@ class varnish::repo (
     validate_string($version)
     validate_slength($version, 3, 3)
 
-    ensure_packages(['apt-transport-https'], {'ensure' => latest})
-
     case $version {
       '3.0': {
           $version_code  = '30'
