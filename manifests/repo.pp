@@ -9,22 +9,6 @@ class varnish::repo (
     include apt
 
     case $version {
-      '3.0': {
-          $version_code  = '30'
-          $key_id = '246BE381150865E2DC8C6B01FC1318ACEE2C594C'
-          if $::lsbdistcodename == 'jessie' {
-              apt::pin { 'varnish':
-                  ensure   => 'present',
-                  packages => [$varnish::packages],
-                  priority => 550,
-                  version  => '3.*'
-              }
-          }
-      }
-      '4.0': {
-          $version_code  = '40'
-          $key_id = 'B7B16293AE0CC24216E9A83DD4E49AD8DE3FFEA4'
-      }
       '4.1': {
           $version_code  = '41'
           $key_id = '9C96F9CA0DC3F4EA78FF332834BF6E8ECBF5C49E'

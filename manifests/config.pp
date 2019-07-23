@@ -5,12 +5,4 @@
 #
 class varnish::config {
   include varnish::params
-
-  # file { '/usr/share/varnish/reload-vcl':
-  #   ensure => 'present',
-  #   owner  => 'root',
-  #   group  => 'root',
-  #   mode   => '0700',
-  #   source => 'puppet:///modules/varnish/reload-vcl',
-  # }
 }
