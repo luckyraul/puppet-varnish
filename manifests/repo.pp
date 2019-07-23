@@ -4,11 +4,9 @@
 # installed. It will fail if called on it's own.
 #
 class varnish::repo (
-    $version  = $varnish::version,
+    String $version  = $varnish::version,
     ) {
     include apt
-    validate_string($version)
-    validate_slength($version, 3, 3)
 
     case $version {
       '3.0': {
@@ -50,6 +48,10 @@ class varnish::repo (
       '6.1': {
           $version_code  = '61'
           $key_id = '4A066C99B76A0F55A40E3E1E387EF1F5742D76CC'
+      }
+      '6.2': {
+          $version_code  = '62'
+          $key_id = 'B54813B54CA95257D3590B3F1B0096460868C7A9'
       }
       default: {
           fail("Unsupported release: ${varnish::version}")

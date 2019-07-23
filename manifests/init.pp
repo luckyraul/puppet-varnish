@@ -1,7 +1,7 @@
 # == Class: varnish
 class varnish (
     $packages                           = $varnish::params::packages,
-    $version                            = $varnish::params::package_version,
+    String $version                     = $varnish::params::package_version,
     $package_ensure                     = $varnish::params::package_ensure,
     $service_ensure                     = $varnish::params::service_ensure,
     $service_status                     = $varnish::params::service_status,
@@ -24,9 +24,6 @@ class varnish (
     $docker              = false,
 ) inherits varnish::params
 {
-
-    validate_string($version)
-    validate_slength($version, 3, 3)
 
     anchor { 'varnish::begin': }
     -> class { 'varnish::repo': }
