@@ -1,6 +1,7 @@
 # == Class: varnish
 class varnish (
     $packages                           = $varnish::params::packages,
+    $manage_repos                       = $varnish::params::manage_repos,
     String $version                     = $varnish::params::package_version,
     $package_ensure                     = $varnish::params::package_ensure,
     $service_ensure                     = $varnish::params::service_ensure,
@@ -26,11 +27,14 @@ class varnish (
 {
 
     anchor { 'varnish::begin': }
-    -> class { 'varnish::repo': }
     -> class { 'varnish::install': }
     -> class { 'varnish::config': }
     -> class { 'varnish::service': }
     -> anchor { 'varnish::end': }
+
+    if $manage_repos {
+      Anchor['varnish::begin'] -> class { 'varnish::repo': } -> Class['varnish::install']
+    }
 
     if $docker {
       file {'/start.sh':

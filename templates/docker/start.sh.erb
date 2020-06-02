@@ -15,4 +15,5 @@ exec bash -c \
   -a ${ADDRESS_PORT}
   -T ${ADMIN_PORT}
   -S /etc/varnish/secret
-  -s ${CACHE_STORAGE}"
+  -s ${CACHE_STORAGE}
+  -p vsl_mask=+Hash"

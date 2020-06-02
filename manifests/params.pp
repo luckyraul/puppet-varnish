@@ -19,6 +19,7 @@ class varnish::params {
           $service_ncsa_name = 'varnishncsa'
           $service_ncsa_ensure = 'running'
           $service_ncsa_status = true
+          $manage_repos = true
 
           case $::lsbdistcodename {
                 'wheezy': {

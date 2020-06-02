@@ -4,7 +4,6 @@
 # fail if called on it's own.
 #
 class varnish::install {
-
   $packages = $varnish::packages
   $ensure   = $varnish::package_ensure
   $admin_listen = $varnish::admin_listen
@@ -16,10 +15,17 @@ class varnish::install {
   $storage_type = $varnish::storage_type
   $storage_size = $varnish::storage_size
   $ulimit = $varnish::ulimit
+  $manage_repos = $varnish::manage_repos
 
   package { $packages :
     ensure => $ensure,
     tag    => 'varnish-install',
+  }
+
+  if (!$manage_repos) {
+    Package[$packages] -> package { 'varnish-modules':
+      ensure => installed,
+    }
   }
 
   case $::lsbdistcodename {
