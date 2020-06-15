@@ -9,11 +9,10 @@ ADDRESS_PORT="${ADDRESS_PORT:-:6081}"
 
 ADMIN_PORT="${ADMIN_PORT:-127.0.0.1:6082}"
 
-exec bash -c \
-  "exec varnishd -F \
+exec varnishd -F \
   -f /etc/varnish/default.vcl \
-  -a ${ADDRESS_PORT}
-  -T ${ADMIN_PORT}
-  -S /etc/varnish/secret
-  -s ${CACHE_STORAGE}
-  -p vsl_mask=+Hash"
+  -a ${ADDRESS_PORT} \
+  -T ${ADMIN_PORT} \
+  -S /etc/varnish/secret \
+  -s ${CACHE_STORAGE} \
+  -p vsl_mask=+Hash
