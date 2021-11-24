@@ -22,16 +22,13 @@ class varnish::params {
           $manage_repos = true
 
           case $::lsbdistcodename {
-                'wheezy': {
-                    $package_version = '4.1'
-                }
-                'jessie': {
-                    $package_version = '5.2'
-                }
                 'stretch': {
                     $package_version = '6.4'
                 }
                 'buster': {
+                    $package_version = '6.4'
+                }
+                'bullseye': {
                     $package_version = '6.4'
                 }
                 default: {
