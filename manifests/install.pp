@@ -53,7 +53,10 @@ class varnish::install {
         }
     }
     default: {
-
+      systemd::dropin_file { 'override.conf':
+        unit   => 'varnish.service',
+        content => template('varnish/systemd.service.erb'),
+      } -> Service[$varnish::service_name]
     }
   }
 }
