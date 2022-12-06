@@ -28,35 +28,8 @@ class varnish::install {
     }
   }
 
-  case $::lsbdistcodename {
-    'jessie', 'stretch': {
-        file { '/etc/systemd/system/varnish.service.d':
-          ensure => 'directory',
-          owner  => 'root',
-          group  => 'root',
-          mode   => '0644',
-        }
-        -> file { '/etc/systemd/system/varnish.service.d/override.conf':
-            ensure  => file,
-            owner   => 'root',
-            group   => 'root',
-            mode    => '0644',
-            content => template('varnish/systemd.service.erb'),
-            notify  => Exec['varnish_systemctl_daemon_reload'],
-        }
-
-        exec { 'varnish_systemctl_daemon_reload':
-          command     => '/bin/systemctl daemon-reload',
-          refreshonly => true,
-          require     => File['/etc/systemd/system/varnish.service.d/override.conf'],
-          notify      => Service[$varnish::service_name],
-        }
-    }
-    default: {
-      systemd::dropin_file { 'override.conf':
-        unit   => 'varnish.service',
-        content => template('varnish/systemd.service.erb'),
-      } -> Service[$varnish::service_name]
-    }
-  }
+  systemd::dropin_file { 'override.conf':
+    unit    => 'varnish.service',
+    content => template('varnish/systemd.service.erb'),
+  } -> Service[$varnish::service_name]
 }

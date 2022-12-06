@@ -26,10 +26,13 @@ class varnish::params {
                     $package_version = '6.4'
                 }
                 'buster': {
-                    $package_version = '6.4'
+                    $package_version = '7.2'
                 }
                 'bullseye': {
-                    $package_version = '6.4'
+                    $package_version = '7.2'
+                }
+                'bookworm': {
+                    $package_version = '7.2'
                 }
                 default: {
                     fail("Unsupported debian release: ${::lsbdistcodename}")

@@ -1,6 +1,6 @@
 {
   "name": "luckyraul-varnish",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "author": "luckyraul",
   "summary": "Module to manage the Varnish Web Accelerator",
   "license": "MIT",
@@ -11,6 +11,6 @@
   "dependencies": [
     {"name":"puppetlabs/stdlib","version_requirement":">= 4.1.0"},
     {"name":"puppetlabs/apt","version_requirement":">= 6.3.0"},
-    {"name": "puppetlabs/inifile","version_requirement":">= 1.4.3"}
+    {"name": "puppet/systemd","version_requirement":">= 3.0.0"}
   ]
 }
