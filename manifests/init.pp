@@ -1,51 +1,25 @@
-# == Class: varnish
 class varnish (
-    $packages                           = $varnish::params::packages,
-    $manage_repos                       = $varnish::params::manage_repos,
-    String $version                     = $varnish::params::package_version,
-    $package_ensure                     = $varnish::params::package_ensure,
-    $service_ensure                     = $varnish::params::service_ensure,
-    $service_status                     = $varnish::params::service_status,
-    $service_log_ensure                 = $varnish::params::service_log_ensure,
-    $service_log_status                 = $varnish::params::service_log_status,
-    $service_ncsa_ensure                = $varnish::params::service_ncsa_ensure,
-    $service_ncsa_status                = $varnish::params::service_ncsa_status,
-    $service_name                       = $varnish::params::service_name,
+  String $package_ensure = installed,
+  String $package_name = $varnish::params::package_name,
+  Boolean $manage_repos = $varnish::params::manage_repos,
+  Varnish::Package_source $package_source = 'lts',
+  Stdlib::Ensure::Service $service_ensure = 'running',
+  Boolean $service_enable = true,
+  String $service_name = 'varnish',
+  Boolean $service_manage = true,
+  String $listen = '', # lint:ignore:params_empty_string_assignment
+  Integer $listen_port = 6081,
+  String $admin_listen = '127.0.0.1',
+  Integer $admin_port = 6082,
+  Stdlib::Absolutepath $varnish_vcl_conf = '/etc/varnish/default.vcl',
+  Stdlib::AbsolutePath $secret_file = '/etc/varnish/secret',
+  String $storage_size = '256m',
+  String $daemon_opts = '-j unix,user=vcache',
+  Hash $instances = {},
+) inherits varnish::params {
+  contain 'varnish::package'
+  contain 'varnish::config'
+  contain 'varnish::service'
 
-    String $admin_listen                = '127.0.0.1',
-    Integer $admin_port                 = 6082,
-    String $listen                      = '0.0.0.0',
-    Integer $listen_port                = 6081,
-    Stdlib::AbsolutePath $secret_file   = '/etc/varnish/secret',
-    Stdlib::AbsolutePath $vcl_conf      = '/etc/varnish/default.vcl',
-    String $storage_size                = '256m',
-    Integer $ulimit                     = 131072,
-    Enum['file','malloc'] $storage_type = 'malloc',
-
-    $docker              = false,
-) inherits varnish::params
-{
-
-    anchor { 'varnish::begin': }
-    -> class { 'varnish::install': }
-    -> class { 'varnish::config': }
-    -> class { 'varnish::service': }
-    -> anchor { 'varnish::end': }
-
-    if $manage_repos {
-      Anchor['varnish::begin'] -> class { 'varnish::repo': } -> Class['varnish::install']
-    }
-
-    if $docker {
-      file {'/start.sh':
-          owner   => root,
-          group   => root,
-          mode    => '0755',
-          content => template('varnish/docker/start.sh.erb'),
-      }
-    }
-
-    Anchor['varnish::begin']  ~> Class['varnish::service']
-    Class['varnish::install'] ~> Class['varnish::service']
-    Class['varnish::config']  ~> Class['varnish::service']
+  create_resources( 'varnish::resource::instance', $instances, {})
 }

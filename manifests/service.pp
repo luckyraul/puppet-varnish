@@ -1,29 +1,28 @@
-# == Class varnish::service
-#
-# This class is meant to be called from varnish It ensure the service is stopped
-# since we manage varnish instances from the varnish::instance resource.
-#
 class varnish::service {
-  include varnish::params
+  assert_private()
 
-  service { $varnish::params::service_name:
-    ensure     => $varnish::service_ensure,
-    enable     => $varnish::service_status,
-    hasstatus  => true,
-    hasrestart => true,
+  $default_opts = [
+    '-F',
+    "-a ${varnish::listen}:${varnish::listen_port}",
+    "-T ${varnish::admin_listen}:${varnish::admin_port}",
+    "-f ${varnish::varnish_vcl_conf}",
+    "-S ${varnish::secret_file}",
+    "-s malloc,${varnish::storage_size}",
+  ]
+
+  systemd::dropin_file { 'varnish_service':
+    unit     => 'varnish.service',
+    content  => epp('varnish/varnish.dropin.epp', { 'default_opts' => $default_opts }),
+    filename => 'varnish_override.conf',
   }
 
-  #service { $varnish::params::service_log_name:
-    #ensure     => $varnish::service_log_ensure,
-    #enable     => $varnish::service_log_status,
-    #hasstatus  => true,
-    #hasrestart => true,
-  #}
+  if $varnish::service_manage {
+    Systemd::Dropin_file['varnish_service'] ~> Service[$varnish::service_name]
 
-  #service { $varnish::params::service_ncsa_name:
-    #ensure     => $varnish::service_ncsa_ensure,
-    #enable     => $varnish::service_ncsa_status,
-    #hasstatus  => true,
-    #hasrestart => true,
-  #}
+    service { $varnish::service_name:
+      ensure  => $varnish::service_ensure,
+      enable  => $varnish::service_enable,
+      require => Package['varnish'],
+    }
+  }
 }

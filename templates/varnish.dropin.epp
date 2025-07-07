@@ -1,0 +1,4 @@
+# THIS FILE IS MANAGED BY PUPPET
+[Service]
+ExecStart=
+ExecStart=/usr/sbin/varnishd <%= join($default_opts, ' ') %> <%= $varnish::daemon_opts %>
