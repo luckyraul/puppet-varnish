@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'docker'
+require 'serverspec'
 
 # Helper to strip ANSI color codes from strings
 def strip_ansi_codes(str)
@@ -37,18 +38,21 @@ describe 'varnish class' do
     container = nil
 
     before(:context) do
-      puts 'Creating container...'
       container = Docker::Container.create(
         'Cmd' => ['tail', '-f', '/dev/null'],
         'Image' => "puppet-lab:#{ENV['GITHUB_RUN_ID']}",
       )
-      puts 'Starting container...'
+      puts "::group::Creating container #{container.id}"
       container.start
+      set :backend, :docker
+      set :docker_container, container.id
+      Specinfra.backend.instance_variable_set(:@container, container)
     end
 
     after(:context) do
       puts 'Stopping container...'
       container&.stop
+      puts '::endgroup::'
     end
 
     it 'works idempotently with no errors' do
@@ -57,29 +61,46 @@ describe 'varnish class' do
         include varnish
       EOS
 
-      puts 'First puppet apply:'
+      puts "First apply on container #{container.id}"
       apply_manifest(container, pp)
 
-      puts 'Second puppet apply:'
+      puts "Second apply on container #{container.id}"
       apply_manifest(container, pp)
     end
+
+    it 'checks if varnish package is installed' do
+      puts "Validate container #{container.id}"
+      expect(package('varnish')).to be_installed
+      command_result = command('varnishd -V')
+      puts "Version: #{command_result.stderr}"
+      # Match the version string in stderr (matches "varnishd x.y.z" and stops before the copyright text)
+      expect(command_result.stderr).to match(%r{varnishd\s+\(varnish-\d+\.\d+\.\d+})
+    end
+
+    describe service('varnish') do
+      it { is_expected.to be_enabled }
+    end
   end
+
   context 'manage stable repos' do
     container = nil
 
     before(:context) do
-      puts 'Creating container...'
       container = Docker::Container.create(
         'Cmd' => ['tail', '-f', '/dev/null'],
         'Image' => "puppet-lab:#{ENV['GITHUB_RUN_ID']}",
       )
-      puts 'Starting container...'
+      puts "::group::Creating container #{container.id}"
       container.start
+      set :backend, :docker
+      set :docker_container, container.id
+      Specinfra.backend.instance_variable_set(:@container, container)
     end
 
     after(:context) do
       puts 'Stopping container...'
       container&.stop
+      puts '::endgroup::'
     end
 
     it 'works idempotently with no errors' do
@@ -90,29 +111,44 @@ describe 'varnish class' do
         }
       EOS
 
-      puts 'First puppet apply:'
+      puts "First apply on container #{container.id}"
       apply_manifest(container, pp)
 
-      puts 'Second puppet apply:'
+      puts "Second apply on container #{container.id}"
       apply_manifest(container, pp)
     end
+    it 'checks if varnish package is installed' do
+      puts "Validate container #{container.id}"
+      expect(package('varnish')).to be_installed
+      command_result = command('varnishd -V')
+      puts "Version: #{command_result.stderr}"
+      # Match the version string in stderr (matches "varnishd x.y.z" and stops before the copyright text)
+      expect(command_result.stderr).to match(%r{varnishd\s+\(varnish-\d+\.\d+\.\d+})
+    end
+    describe service('varnish') do
+      it { is_expected.to be_enabled }
+    end
   end
+
   context 'manage fresh repos' do
     container = nil
 
     before(:context) do
-      puts 'Creating container...'
       container = Docker::Container.create(
         'Cmd' => ['tail', '-f', '/dev/null'],
         'Image' => "puppet-lab:#{ENV['GITHUB_RUN_ID']}",
       )
-      puts 'Starting container...'
+      puts "::group::Creating container #{container.id}"
       container.start
+      set :backend, :docker
+      set :docker_container, container.id
+      Specinfra.backend.instance_variable_set(:@container, container)
     end
 
     after(:context) do
       puts 'Stopping container...'
       container&.stop
+      puts '::endgroup::'
     end
 
     it 'works idempotently with no errors' do
@@ -129,6 +165,16 @@ describe 'varnish class' do
 
       puts 'Second puppet apply:'
       apply_manifest(container, pp)
+    end
+    it 'checks if varnish package is installed' do
+      expect(package('varnish')).to be_installed
+      command_result = command('varnishd -V')
+      puts "Version: #{command_result.stderr}"
+      # Match the version string in stderr (matches "varnishd x.y.z" and stops before the copyright text)
+      expect(command_result.stderr).to match(%r{varnishd\s+\(varnish-\d+\.\d+\.\d+})
+    end
+    describe service('varnish') do
+      it { is_expected.to be_enabled }
     end
   end
 end

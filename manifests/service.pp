@@ -11,17 +11,24 @@ class varnish::service {
   ]
 
   systemd::dropin_file { 'varnish_service':
-    unit     => 'varnish.service',
+    unit     => "${varnish::service_name}.service",
     content  => epp('varnish/varnish.dropin.epp', { 'default_opts' => $default_opts }),
     filename => 'varnish_override.conf',
   }
 
   if $varnish::service_manage {
-    Systemd::Dropin_file['varnish_service'] ~> Service[$varnish::service_name]
+    Systemd::Dropin_file['varnish_service'] ~> Service['varnish']
 
-    service { $varnish::service_name:
+    service { 'varnish':
       ensure  => $varnish::service_ensure,
+      name    => $varnish::service_name,
       enable  => $varnish::service_enable,
+      require => Package['varnish'],
+    }
+    service { 'varnishnca':
+      ensure  => $varnish::logservice_ensure,
+      name    => $varnish::logservice_name,
+      enable  => $varnish::logservice_enable,
       require => Package['varnish'],
     }
   }
