@@ -17,6 +17,7 @@ class varnish (
   Stdlib::Absolutepath $varnish_vcl_conf = '/etc/varnish/default.vcl',
   Stdlib::AbsolutePath $secret_file = '/etc/varnish/secret',
   String $storage_size = '256m',
+  String $conf_dir = $varnish::params::conf_dir,
   String $daemon_opts = '-j unix,user=vcache',
   Hash $instances = {},
 ) inherits varnish::params {

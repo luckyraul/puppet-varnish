@@ -1,6 +1,7 @@
 class varnish::params {
   $manage_repos = false
   $package_name = 'varnish'
+  $conf_dir = '/etc/varnish'
   case $facts['os']['family'] {
     'Debian': {
       case $facts['os']['name'] {

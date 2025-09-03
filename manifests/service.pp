@@ -8,12 +8,14 @@ class varnish::service {
     "-f ${varnish::varnish_vcl_conf}",
     "-S ${varnish::secret_file}",
     "-s malloc,${varnish::storage_size}",
+    '-P %t/%N/varnishd.pid',
   ]
 
   systemd::dropin_file { 'varnish_service':
     unit     => "${varnish::service_name}.service",
     content  => epp('varnish/varnish.dropin.epp', { 'default_opts' => $default_opts }),
     filename => 'varnish_override.conf',
+    require  => Package['varnish'],
   }
 
   if $varnish::service_manage {

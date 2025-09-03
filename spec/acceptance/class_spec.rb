@@ -3,6 +3,10 @@
 require 'docker'
 require 'serverspec'
 
+# Increase Docker timeouts to prevent TimeoutError
+Docker.options[:read_timeout] = 300 # 5 minutes
+Docker.options[:write_timeout] = 300
+
 # Helper to strip ANSI color codes from strings
 def strip_ansi_codes(str)
   str.gsub(%r{\e\[[\d;]*m}, '') # regex matches ANSI escape sequences
@@ -10,9 +14,9 @@ end
 
 def apply_manifest(container, manifest)
   puts "\n--- Applying manifest ---"
-  container.store_file('/tmp/manifest.pp', manifest)
+  container.store_file('/manifest.pp', manifest)
   result = container.exec(
-    ['/opt/puppetlabs/bin/puppet', 'apply', '--verbose', '--detailed-exitcodes', '/tmp/manifest.pp'],
+    ['puppet', 'apply', '--verbose', '--detailed-exitcodes', '/manifest.pp'],
     tty: true,
   )
 
@@ -39,8 +43,15 @@ describe 'varnish class' do
 
     before(:context) do
       container = Docker::Container.create(
-        'Cmd' => ['tail', '-f', '/dev/null'],
         'Image' => "puppet-lab:#{ENV['GITHUB_RUN_ID']}",
+        'HostConfig' => {
+          'CgroupnsMode' => 'host',
+          'Binds' => ['/sys/fs/cgroup:/sys/fs/cgroup:rw'],
+          'Privileged' => true
+        },
+        'Volumes' => {
+          '/sys/fs/cgroup' => {}
+        },
       )
       puts "::group::Creating container #{container.id}"
       container.start
@@ -50,14 +61,16 @@ describe 'varnish class' do
     end
 
     after(:context) do
-      puts 'Stopping container...'
+      puts "Stopping container #{container.id}..."
       container&.stop
+      puts 'Container was stopped'
+      container&.delete
       puts '::endgroup::'
     end
 
     it 'works idempotently with no errors' do
       pp = <<-EOS
-        include dummy_service
+        # include dummy_service
         include varnish
       EOS
 
@@ -87,8 +100,15 @@ describe 'varnish class' do
 
     before(:context) do
       container = Docker::Container.create(
-        'Cmd' => ['tail', '-f', '/dev/null'],
         'Image' => "puppet-lab:#{ENV['GITHUB_RUN_ID']}",
+        'HostConfig' => {
+          'CgroupnsMode' => 'host',
+          'Binds' => ['/sys/fs/cgroup:/sys/fs/cgroup:rw'],
+          'Privileged' => true
+        },
+        'Volumes' => {
+          '/sys/fs/cgroup' => {}
+        },
       )
       puts "::group::Creating container #{container.id}"
       container.start
@@ -98,14 +118,16 @@ describe 'varnish class' do
     end
 
     after(:context) do
-      puts 'Stopping container...'
+      puts "Stopping container #{container.id}..."
       container&.stop
+      puts 'Container was stopped'
+      container&.delete
       puts '::endgroup::'
     end
 
     it 'works idempotently with no errors' do
       pp = <<-EOS
-        include dummy_service
+        # include dummy_service
         class { 'varnish':
           manage_repos => true
         }
@@ -117,6 +139,7 @@ describe 'varnish class' do
       puts "Second apply on container #{container.id}"
       apply_manifest(container, pp)
     end
+
     it 'checks if varnish package is installed' do
       puts "Validate container #{container.id}"
       expect(package('varnish')).to be_installed
@@ -125,6 +148,7 @@ describe 'varnish class' do
       # Match the version string in stderr (matches "varnishd x.y.z" and stops before the copyright text)
       expect(command_result.stderr).to match(%r{varnishd\s+\(varnish-\d+\.\d+\.\d+})
     end
+
     describe service('varnish') do
       it { is_expected.to be_enabled }
     end
@@ -135,8 +159,15 @@ describe 'varnish class' do
 
     before(:context) do
       container = Docker::Container.create(
-        'Cmd' => ['tail', '-f', '/dev/null'],
         'Image' => "puppet-lab:#{ENV['GITHUB_RUN_ID']}",
+        'HostConfig' => {
+          'CgroupnsMode' => 'host',
+          'Binds' => ['/sys/fs/cgroup:/sys/fs/cgroup:rw'],
+          'Privileged' => true
+        },
+        'Volumes' => {
+          '/sys/fs/cgroup' => {}
+        },
       )
       puts "::group::Creating container #{container.id}"
       container.start
@@ -146,33 +177,38 @@ describe 'varnish class' do
     end
 
     after(:context) do
-      puts 'Stopping container...'
+      puts "Stopping container #{container.id}..."
       container&.stop
+      puts 'Container was stopped'
+      container&.delete
       puts '::endgroup::'
     end
 
     it 'works idempotently with no errors' do
       pp = <<-EOS
-        include dummy_service
+        # include dummy_service
         class { 'varnish':
           manage_repos => true,
           package_source => 'fresh',
         }
       EOS
 
-      puts 'First puppet apply:'
+      puts "First apply on container #{container.id}"
       apply_manifest(container, pp)
 
-      puts 'Second puppet apply:'
+      puts "Second apply on container #{container.id}"
       apply_manifest(container, pp)
     end
+
     it 'checks if varnish package is installed' do
+      puts "Validate container #{container.id}"
       expect(package('varnish')).to be_installed
       command_result = command('varnishd -V')
       puts "Version: #{command_result.stderr}"
       # Match the version string in stderr (matches "varnishd x.y.z" and stops before the copyright text)
       expect(command_result.stderr).to match(%r{varnishd\s+\(varnish-\d+\.\d+\.\d+})
     end
+
     describe service('varnish') do
       it { is_expected.to be_enabled }
     end
